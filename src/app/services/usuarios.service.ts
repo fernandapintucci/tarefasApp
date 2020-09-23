@@ -9,11 +9,11 @@ export class UsuariosService {
 
   public listaUsuarios = [];
 
-  constructor( private armazenamentoService: ArmazenamentoService) { }
+  constructor(private armazenamentoService: ArmazenamentoService) { }
 
-  public async buscarTodos(){
+  public async buscarTodos() {
     this.listaUsuarios = await this.armazenamentoService.pegarDados('usuarios');
-  
+
     if (!this.listaUsuarios) {
       this.listaUsuarios = [];
     }
@@ -21,19 +21,19 @@ export class UsuariosService {
 
   public async salvar(usuario: Usuario) {
     await this.buscarTodos();
- 
-    if(!usuario) {
+
+    if (!usuario) {
       return false;
     }
 
-    if(!this.listaUsuarios) {
+    if (!this.listaUsuarios) {
       this.listaUsuarios = [];
     }
 
     this.listaUsuarios.push(usuario);
-  
+
     return await this.armazenamentoService.salvarDados('usuarios', this.listaUsuarios);
-  }  
+  }
 
   public async login(email: string, senha: string) {
     let usuario: Usuario;
@@ -44,24 +44,42 @@ export class UsuariosService {
       return (usuarioArmazenado.email == email && usuarioArmazenado.senha == senha);
     }); // retorna Array;
 
-    if(listaTemporaria.length > 0) {
+    if (listaTemporaria.length > 0) {
       usuario = listaTemporaria.reduce(item => item);
     }
     return usuario;
   }
 
-  public salvarUsuarioLogado(usuario: Usuario){
+  public salvarUsuarioLogado(usuario: Usuario) {
     delete usuario.senha;
     this.armazenamentoService.salvarDados('usuarioLogado', usuario);
   }
 
-  public async buscarUsuarioLogado(){
+  public async buscarUsuarioLogado() {
     return await this.armazenamentoService.pegarDados('usuarioLogado');
   }
 
-  public async removerUsuarioLogado(){
+  public async removerUsuarioLogado() {
     return await this.armazenamentoService.removerDados('usuarioLogado');
+  }
+
+  public async alterar(usuario: Usuario){
+    if(!usuario){
+      return false;
     }
+    await this.buscarTodos();
+    const index = this.listaUsuarios.findIndex(usuarioArmazenado => {
+      return usuarioArmazenado.email == usuario.email;
+    });
+
+    const usuarioTemporario = this.listaUsuarios[index] as Usuario;
+
+    usuario.senha = usuarioTemporario.senha;
+
+    this.listaUsuarios[index] = usuario;
+
+    return await this.armazenamentoService.salvarDados('usuarios', this.listaUsuarios);
+  } 
 }
 
 
