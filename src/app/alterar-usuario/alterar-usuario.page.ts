@@ -74,22 +74,22 @@ export class AlterarUsuarioPage implements OnInit {
     this.formAlterar.patchValue({ dataNascimento: this.usuario.dataNascimento.toISOString() });
   }
 
-  public async salvar() {
-    if (this.formAlterar.valid) {
-      this.usuario.nome = this.formAlterar.value.nome;
-      this.usuario.dataNascimento = new Date(this.formAlterar.value.dataNascimento);
-      this.usuario.genero = this.formAlterar.value.genero;
-      this.usuario.celular = this.formAlterar.value.celular;
-      this.usuario.email = this.formAlterar.value.email;
+  public async salvar() { // Método Salvar novos dados
+    if (this.formAlterar.valid) { // Condição para verificar se o formulário é válido
+      this.usuario.nome = this.formAlterar.value.nome; // Dados para validação
+      this.usuario.dataNascimento = new Date(this.formAlterar.value.dataNascimento); // Parâmetro como data
+      this.usuario.genero = this.formAlterar.value.genero;  // Dados para validação
+      this.usuario.celular = this.formAlterar.value.celular;  // Dados para validação
+      this.usuario.email = this.formAlterar.value.email;  // Dados para validação
 
-      if(await this.usuariosService.alterar(this.usuario)){
-        this.usuario.manterLogado = this.manterLogadoTemp;
-        this.usuariosService.salvarUsuarioLogado(this.usuario);
-        this.exibirAlerta('SUCESSO!', 'Usuário alterado com sucesso!')
-        this.router.navigateByUrl('/configuracoes');
+      if(await this.usuariosService.alterar(this.usuario)){ // Condição para salvar com a alteração 
+        this.usuario.manterLogado = this.manterLogadoTemp; //Devolve a propriedade "manter logado"
+        this.usuariosService.salvarUsuarioLogado(this.usuario); // Salvar os dados atualizados
+        this.exibirAlerta('SUCESSO!', 'Usuário alterado com sucesso!') // Alerta que avisa que foi alterado com sucesso
+        this.router.navigateByUrl('/configuracoes'); // Redireciona para a página "configuracoes"
       }
     } else {
-      this.exibirAlerta('ADVERTÊNCIA!', 'Formulário inválido </br> Verifique os campos do seu formulário!')
+      this.exibirAlerta('ADVERTÊNCIA!', 'Formulário inválido </br> Verifique os campos do seu formulário!') // Caso der erro, aparece essa mensagem
     }
   }
 
